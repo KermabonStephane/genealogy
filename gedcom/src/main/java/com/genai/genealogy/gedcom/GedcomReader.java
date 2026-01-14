@@ -71,12 +71,4 @@ public class GedcomReader {
             }
         }
     }
-
-    private static class NonClosingInputStream extends InputStream {
-        private final InputStream delegate;
-        public NonClosingInputStream(InputStream delegate) { this.delegate = delegate; }
-        @Override public int read() throws IOException { return delegate.read(); }
-        @Override public int read(byte[] b, int off, int len) throws IOException { return delegate.read(b, off, len); }
-        @Override public void close() {} // Do nothing
-    }
 }
