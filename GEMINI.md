@@ -50,6 +50,7 @@ We will follow the principles of Clean Architecture to create a system that is i
 -   **Unit Tests**: Should be fast, focused, and test a single unit of code in isolation.
 -   **Integration Tests**: Should test the integration between different parts of the system.
 -   **Test-Driven Development (TDD)**: Is encouraged. Write a failing test before you write the production code.
+-   **Framework** For java always use Sprock framework.
 
 ## 5. Dependencies
 
