@@ -50,6 +50,11 @@
             <version>${groovy.version}</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>com.demis27.genealogy</groupId>
+            <artifactId>ansel</artifactId>
+            <version>1.0.0</version>
+        </dependency>
     </dependencies>
 
     <build>

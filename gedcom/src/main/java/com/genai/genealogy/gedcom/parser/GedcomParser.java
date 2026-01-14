@@ -1,10 +1,7 @@
 package com.genai.genealogy.gedcom.parser;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
@@ -15,51 +12,66 @@ public class GedcomParser {
 
     private static final Pattern LINE_PATTERN = Pattern.compile("^(\\d+)\\s+(?:@([^@]+)@\\s+)?([^\\s]+)(?:\\s+(.*))?$");
 
-    public List<RawRecord> parse(InputStream inputStream) throws IOException {
+    public List<RawRecord> parse(InputStream inputStream, java.nio.charset.Charset charset) throws IOException {
         List<RawRecord> topLevelRecords = new ArrayList<>();
         Stack<RawRecord> stack = new Stack<>();
 
-        try (BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8))) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                line = line.trim();
-                if (line.isEmpty()) continue;
+        byte[] bytes = inputStream.readAllBytes();
+        List<String> lines = splitLines(bytes, charset);
 
-                Matcher matcher = LINE_PATTERN.matcher(line);
-                if (!matcher.matches()) continue;
+        for (String line : lines) {
+            line = line.trim();
+            if (line.isEmpty()) continue;
 
-                int level = Integer.parseInt(matcher.group(1));
-                String id = matcher.group(2);
-                String tag = matcher.group(3);
-                String value = matcher.group(4);
+            Matcher matcher = LINE_PATTERN.matcher(line);
+            if (!matcher.matches()) continue;
 
-                // Note: Sometimes the ID and Tag are swapped in GEDCOM for top-level records
-                // e.g. "0 @I1@ INDI" -> level=0, id=I1, tag=INDI
-                // But sometimes it's "0 HEAD" -> level=0, id=null, tag=HEAD
-                // My regex handles both.
+            int level = Integer.parseInt(matcher.group(1));
+            String id = matcher.group(2);
+            String tag = matcher.group(3);
+            String value = matcher.group(4);
 
-                RawRecord record = RawRecord.builder()
-                        .level(level)
-                        .id(id)
-                        .tag(tag)
-                        .value(value)
-                        .build();
+            RawRecord record = RawRecord.builder()
+                    .level(level)
+                    .id(id)
+                    .tag(tag)
+                    .value(value)
+                    .build();
 
-                if (level == 0) {
-                    topLevelRecords.add(record);
-                    stack.clear();
+            if (level == 0) {
+                topLevelRecords.add(record);
+                stack.clear();
+                stack.push(record);
+            } else {
+                while (!stack.isEmpty() && stack.peek().getLevel() >= level) {
+                    stack.pop();
+                }
+                if (!stack.isEmpty()) {
+                    stack.peek().getChildren().add(record);
                     stack.push(record);
-                } else {
-                    while (!stack.isEmpty() && stack.peek().getLevel() >= level) {
-                        stack.pop();
-                    }
-                    if (!stack.isEmpty()) {
-                        stack.peek().getChildren().add(record);
-                        stack.push(record);
-                    }
                 }
             }
         }
         return topLevelRecords;
+    }
+
+    private List<String> splitLines(byte[] bytes, java.nio.charset.Charset charset) {
+        List<String> lines = new ArrayList<>();
+        int start = 0;
+        for (int i = 0; i < bytes.length; i++) {
+            if (bytes[i] == 0x0A || bytes[i] == 0x0D) {
+                if (i > start) {
+                    lines.add(new String(bytes, start, i - start, charset));
+                }
+                if (bytes[i] == 0x0D && i + 1 < bytes.length && bytes[i+1] == 0x0A) {
+                    i++;
+                }
+                start = i + 1;
+            }
+        }
+        if (start < bytes.length) {
+            lines.add(new String(bytes, start, bytes.length - start, charset));
+        }
+        return lines;
     }
 }

@@ -18,7 +18,7 @@ class GedcomParserSpec extends Specification {
         def inputStream = new ByteArrayInputStream(gedcomText.getBytes("UTF-8"))
 
         when:
-        def records = parser.parse(inputStream)
+        def records = parser.parse(inputStream, java.nio.charset.StandardCharsets.UTF_8)
 
         then:
         records.size() == 2
