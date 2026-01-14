@@ -43,11 +43,11 @@ public class GedcomParser {
                 stack.clear();
                 stack.push(record);
             } else {
-                while (!stack.isEmpty() && stack.peek().getLevel() >= level) {
+                while (!stack.isEmpty() && stack.peek().level() >= level) {
                     stack.pop();
                 }
                 if (!stack.isEmpty()) {
-                    stack.peek().getChildren().add(record);
+                    stack.peek().children().add(record);
                     stack.push(record);
                 }
             }

@@ -26,16 +26,16 @@ public interface GedcomMapper {
         Map<String, Submitter> submitters = new HashMap<>();
 
         for (RawRecord raw : rawRecords) {
-            if ("HEAD".equals(raw.getTag())) {
+            if ("HEAD".equals(raw.tag())) {
                 header = toHeader(raw);
-            } else if ("INDI".equals(raw.getTag())) {
-                individuals.put(raw.getId(), toIndividual(raw));
-            } else if ("FAM".equals(raw.getTag())) {
-                families.put(raw.getId(), toFamily(raw));
-            } else if ("SOUR".equals(raw.getTag())) {
-                sources.put(raw.getId(), toSource(raw));
-            } else if ("SUBM".equals(raw.getTag())) {
-                submitters.put(raw.getId(), toSubmitter(raw));
+            } else if ("INDI".equals(raw.tag())) {
+                individuals.put(raw.id(), toIndividual(raw));
+            } else if ("FAM".equals(raw.tag())) {
+                families.put(raw.id(), toFamily(raw));
+            } else if ("SOUR".equals(raw.tag())) {
+                sources.put(raw.id(), toSource(raw));
+            } else if ("SUBM".equals(raw.tag())) {
+                submitters.put(raw.id(), toSubmitter(raw));
             }
         }
 
@@ -84,14 +84,14 @@ public interface GedcomMapper {
 
     default List<String> mapTags(RawRecord raw, String tag) {
         return raw.getChildren(tag).stream()
-                .map(RawRecord::getValue)
+                .map(RawRecord::value)
                 .collect(Collectors.toList());
     }
 
     default List<Event> mapEvents(RawRecord raw) {
         List<String> eventTags = List.of("BIRT", "DEAT", "CHR", "BURI", "MARR", "DIV", "ADOP");
-        return raw.getChildren().stream()
-                .filter(c -> eventTags.contains(c.getTag()))
+        return raw.children().stream()
+                .filter(c -> eventTags.contains(c.tag()))
                 .map(this::toEvent)
                 .collect(Collectors.toList());
     }
