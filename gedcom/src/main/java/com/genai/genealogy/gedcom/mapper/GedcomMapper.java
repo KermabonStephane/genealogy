@@ -1,10 +1,15 @@
 package com.genai.genealogy.gedcom.mapper;
 
-import com.genai.genealogy.gedcom.domain.*;
+import com.genai.genealogy.gedcom.domain.Event;
+import com.genai.genealogy.gedcom.domain.Family;
+import com.genai.genealogy.gedcom.domain.Gedcom;
+import com.genai.genealogy.gedcom.domain.Header;
+import com.genai.genealogy.gedcom.domain.Individual;
+import com.genai.genealogy.gedcom.domain.Source;
+import com.genai.genealogy.gedcom.domain.Submitter;
 import com.genai.genealogy.gedcom.parser.RawRecord;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-import org.mapstruct.Named;
 import org.mapstruct.factory.Mappers;
 
 import java.util.HashMap;
