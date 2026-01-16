@@ -2,58 +2,45 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <groupId>com.genai.genealogy</groupId>
+        <artifactId>genealogy-parent</artifactId>
+        <version>1.0.0-SNAPSHOT</version>
+    </parent>
+
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.genai.genealogy</groupId>
-    <artifactId>gedcom-reader</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
-
-    <properties>
-        <java.version>25</java.version>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.compiler.source>${java.version}</maven.compiler.source>
-        <maven.compiler.target>${java.version}</maven.compiler.target>
-
-        <lombok.version>1.18.40</lombok.version>
-        <mapstruct.version>1.6.3</mapstruct.version>
-        <spock.version>2.4-groovy-5.0</spock.version>
-        <groovy.version>5.0.0</groovy.version>
-
-        <maven-compiler-plugin.version>3.13.0</maven-compiler-plugin.version>
-        <maven-surefire-plugin.version>3.5.2</maven-surefire-plugin.version>
-        <gmavenplus-plugin.version>4.0.1</gmavenplus-plugin.version>
-    </properties>
+    <artifactId>gedcom</artifactId>
+    <name>Gedcom</name>
+    <description>Gedcom 5.5 reader and writer for Java.</description>
 
     <dependencies>
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <version>${lombok.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.mapstruct</groupId>
             <artifactId>mapstruct</artifactId>
-            <version>${mapstruct.version}</version>
+        </dependency>
+
+        <!-- Internal dependencies -->
+        <dependency>
+            <groupId>com.demis27.genealogy</groupId>
+            <artifactId>ansel</artifactId>
         </dependency>
 
         <!-- Testing -->
         <dependency>
             <groupId>org.spockframework</groupId>
             <artifactId>spock-core</artifactId>
-            <version>${spock.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.groovy</groupId>
             <artifactId>groovy</artifactId>
-            <version>${groovy.version}</version>
             <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.demis27.genealogy</groupId>
-            <artifactId>ansel</artifactId>
-            <version>1.0.0</version>
         </dependency>
     </dependencies>
 
@@ -62,7 +49,6 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>${maven-compiler-plugin.version}</version>
                 <configuration>
                     <parameters>true</parameters>
                     <annotationProcessorPaths>
@@ -82,7 +68,6 @@
             <plugin>
                 <groupId>org.codehaus.gmavenplus</groupId>
                 <artifactId>gmavenplus-plugin</artifactId>
-                <version>${gmavenplus-plugin.version}</version>
                 <executions>
                     <execution>
                         <goals>
@@ -100,7 +85,6 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>${maven-surefire-plugin.version}</version>
                 <configuration>
                     <useModulePath>false</useModulePath>
                     <includes>

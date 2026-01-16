@@ -2,63 +2,48 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <groupId>com.genai.genealogy</groupId>
+        <artifactId>genealogy-parent</artifactId>
+        <version>1.0.0-SNAPSHOT</version>
+    </parent>
+
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.demis27.genealogy</groupId>
     <artifactId>ansel</artifactId>
-    <version>1.0.0</version>
-
-    <properties>
-        <maven.compiler.source>25</maven.compiler.source>
-        <maven.compiler.target>25</maven.compiler.target>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <groovy.version>5.0.3</groovy.version>
-        <spock.version>2.4-groovy-5.0</spock.version>
-        <byte-buddy.version>1.18.3</byte-buddy.version>
-        <objenesis.version>3.4</objenesis.version>
-        <hamcrest.version>3.0</hamcrest.version>
-        <maven-compiler-plugin.version>3.14.1</maven-compiler-plugin.version>
-        <gmavenplus-plugin.version>4.2.1</gmavenplus-plugin.version>
-        <maven-surefire-plugin.version>3.5.4</maven-surefire-plugin.version>
-        <maven-resources-plugin.version>3.4.0</maven-resources-plugin.version>
-    </properties>
+    <name>Ansel</name>
+    <description>Ansel 1985 and 1993 Charsets reader and writer for Java.</description>
 
     <dependencies>
         <!-- Mandatory dependencies for using Spock -->
         <dependency>
             <groupId>org.spockframework</groupId>
             <artifactId>spock-core</artifactId>
-            <version>${spock.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.spockframework</groupId>
             <artifactId>spock-junit4</artifactId>
-            <version>${spock.version}</version>
             <scope>test</scope>
         </dependency>
         <!-- Optional dependencies for using Spock -->
         <dependency> <!-- use a specific Groovy version rather than the one specified by spock-core -->
             <groupId>org.apache.groovy</groupId>
             <artifactId>groovy</artifactId>
-            <version>${groovy.version}</version>
         </dependency>
         <dependency> <!-- enables mocking of classes (in addition to interfaces) -->
             <groupId>net.bytebuddy</groupId>
             <artifactId>byte-buddy</artifactId>
-            <version>${byte-buddy.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency> <!-- enables mocking of classes without default constructor (together with ByteBuddy or CGLIB) -->
             <groupId>org.objenesis</groupId>
             <artifactId>objenesis</artifactId>
-            <version>${objenesis.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency> <!-- only required if Hamcrest matchers are used -->
             <groupId>org.hamcrest</groupId>
             <artifactId>hamcrest-core</artifactId>
-            <version>${hamcrest.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -68,7 +53,6 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>${maven-compiler-plugin.version}</version>
                 <configuration>
                     <source>25</source>
                     <target>25</target>
@@ -79,7 +63,6 @@
                 visit https://github.com/groovy/GMavenPlus/wiki -->
                 <groupId>org.codehaus.gmavenplus</groupId>
                 <artifactId>gmavenplus-plugin</artifactId>
-                <version>${gmavenplus-plugin.version}</version>
                 <executions>
                     <execution>
                         <goals>
@@ -91,7 +74,6 @@
             </plugin>
             <plugin>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>${maven-surefire-plugin.version}</version>
                 <configuration>
                     <useFile>false</useFile>
                     <includes>
@@ -112,7 +94,6 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-resources-plugin</artifactId>
-                <version>${maven-resources-plugin.version}</version>
             </plugin>
         </plugins>
     </build>
