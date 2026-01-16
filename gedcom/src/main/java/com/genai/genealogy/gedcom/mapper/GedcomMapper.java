@@ -21,37 +21,6 @@ import java.util.stream.Collectors;
 public interface GedcomMapper {
     GedcomMapper INSTANCE = Mappers.getMapper(GedcomMapper.class);
 
-    default Gedcom toGedcom(List<RawRecord> rawRecords) {
-        if (rawRecords == null) return null;
-        
-        Header header = null;
-        Map<String, Individual> individuals = new HashMap<>();
-        Map<String, Family> families = new HashMap<>();
-        Map<String, Source> sources = new HashMap<>();
-        Map<String, Submitter> submitters = new HashMap<>();
-
-        for (RawRecord raw : rawRecords) {
-            if ("HEAD".equals(raw.tag())) {
-                header = toHeader(raw);
-            } else if ("INDI".equals(raw.tag())) {
-                individuals.put(raw.id(), toIndividual(raw));
-            } else if ("FAM".equals(raw.tag())) {
-                families.put(raw.id(), toFamily(raw));
-            } else if ("SOUR".equals(raw.tag())) {
-                sources.put(raw.id(), toSource(raw));
-            } else if ("SUBM".equals(raw.tag())) {
-                submitters.put(raw.id(), toSubmitter(raw));
-            }
-        }
-
-        return Gedcom.builder()
-                .header(header)
-                .individuals(individuals)
-                .families(families)
-                .sources(sources)
-                .submitters(submitters)
-                .build();
-    }
 
     @Mapping(target = "source", expression = "java(raw.getChildValue(\"SOUR\"))")
     @Mapping(target = "version", expression = "java(raw.getChild(\"SOUR\").map(s -> s.getChildValue(\"VERS\")).orElse(null))")

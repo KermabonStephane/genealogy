@@ -1,6 +1,11 @@
 package com.genai.genealogy.gedcom;
 
+import com.genai.genealogy.gedcom.domain.Family;
 import com.genai.genealogy.gedcom.domain.Gedcom;
+import com.genai.genealogy.gedcom.domain.Header;
+import com.genai.genealogy.gedcom.domain.Individual;
+import com.genai.genealogy.gedcom.domain.Source;
+import com.genai.genealogy.gedcom.domain.Submitter;
 import com.genai.genealogy.gedcom.mapper.GedcomMapper;
 import com.genai.genealogy.gedcom.parser.GedcomParser;
 import com.genai.genealogy.gedcom.parser.RawRecord;
@@ -10,7 +15,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class GedcomReader {
     private final GedcomParser parser = new GedcomParser();
@@ -24,7 +31,34 @@ public class GedcomReader {
         Charset charset = detectCharset(inputStream);
 
         List<RawRecord> rawRecords = parser.parse(inputStream, charset);
-        return mapper.toGedcom(rawRecords);
+        
+        Header header = null;
+        Map<String, Individual> individuals = new HashMap<>();
+        Map<String, Family> families = new HashMap<>();
+        Map<String, Source> sources = new HashMap<>();
+        Map<String, Submitter> submitters = new HashMap<>();
+
+        for (RawRecord raw : rawRecords) {
+            if ("HEAD".equals(raw.tag())) {
+                header = mapper.toHeader(raw);
+            } else if ("INDI".equals(raw.tag())) {
+                individuals.put(raw.id(), mapper.toIndividual(raw));
+            } else if ("FAM".equals(raw.tag())) {
+                families.put(raw.id(), mapper.toFamily(raw));
+            } else if ("SOUR".equals(raw.tag())) {
+                sources.put(raw.id(), mapper.toSource(raw));
+            } else if ("SUBM".equals(raw.tag())) {
+                submitters.put(raw.id(), mapper.toSubmitter(raw));
+            }
+        }
+
+        return Gedcom.builder()
+                .header(header)
+                .individuals(individuals)
+                .families(families)
+                .sources(sources)
+                .submitters(submitters)
+                .build();
     }
 
     private Charset detectCharset(InputStream is) throws IOException {
