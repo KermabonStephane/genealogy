@@ -27,7 +27,7 @@ public interface GedcomMapper {
     @Mapping(target = "gedcomVersion", expression = "java(raw.getChild(\"GEDC\").map(g -> g.getChildValue(\"VERS\")).orElse(null))")
     @Mapping(target = "encoding", expression = "java(raw.getChildValue(\"CHAR\"))")
     @Mapping(target = "date", expression = "java(raw.getChildValue(\"DATE\"))")
-    @Mapping(target = "time", expression = "java(raw.getChildValue(\"TIME\"))")
+    @Mapping(target = "time", expression = "java(raw.getChild(\"DATE\").map(d -> d.getChildValue(\"TIME\")).orElse(null))")
     @Mapping(target = "submitterId", expression = "java(raw.getChildValue(\"SUBM\"))")
     Header toHeader(RawRecord raw);
 

@@ -1,0 +1,16 @@
+0 HEAD
+1 SOUR Gramps
+2 VERS 6.0.6
+2 NAME Gramps
+1 DATE 16 JAN 2026
+2 TIME 09:56:38
+1 SUBM @SUBM@
+1 FILE /Users/stephanekermabon/Perso/genai/kermabon.ged
+1 COPR Copyright (c) 2026 .
+1 GEDC
+2 VERS 5.5.1
+2 FORM LINEAGE-LINKED
+1 CHAR UTF-8
+1 LANG English
+0 @SUBM@ SUBM
+1 NAME John /Doe/

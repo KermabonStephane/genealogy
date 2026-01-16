@@ -37,4 +37,31 @@ class GedcomReaderSpec extends Specification {
         fam.events[0].type == "MARR"
         fam.events[0].date == "1 JAN 1920"
     }
+
+    def "should read a GEDCOM file with only header"() {
+        given:
+        def reader = new GedcomReader()
+        def inputStream = getClass().getResourceAsStream("/samples/header.ged")
+
+        when:
+        def gedcom = reader.read(inputStream)
+
+        then:
+        gedcom != null
+        gedcom.header != null
+        gedcom.header.source == "Gramps"
+        gedcom.header.version == "6.0.6"
+        gedcom.header.gedcomVersion == "5.5.1"
+        gedcom.header.encoding == "UTF-8"
+        gedcom.header.date == "16 JAN 2026"
+        gedcom.header.time == "09:56:38"
+        gedcom.header.submitterId == "@SUBM@"
+
+        and:
+        gedcom.individuals.isEmpty()
+        gedcom.families.isEmpty()
+        gedcom.sources.isEmpty()
+        gedcom.submitters.size() == 1
+        gedcom.submitters["SUBM"].name == "John /Doe/"
+    }
 }
