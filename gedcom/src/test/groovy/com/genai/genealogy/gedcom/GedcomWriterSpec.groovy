@@ -13,8 +13,8 @@ class GedcomWriterSpec extends Specification {
         def reader = new GedcomReader()
 
         def header = Header.builder()
-                .source("GenAI")
-                .gedcomVersion("5.5")
+                .source(HeaderSource.builder().name("Gramps").version("6.0.6").build())
+                .gedcomVersion(GedcomVersion.builder().version("5.5.1").build())
                 .encoding("UTF-8")
                 .build()
 

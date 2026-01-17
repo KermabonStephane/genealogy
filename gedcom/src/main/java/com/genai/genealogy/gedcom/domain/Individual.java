@@ -6,7 +6,7 @@ import java.util.List;
 @Builder
 public record Individual(
     String id,
-    String name,
+    PersonalName name,
     String sex,
     List<Event> events,
     List<String> familyAsChildIds,

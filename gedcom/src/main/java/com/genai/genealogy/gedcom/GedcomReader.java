@@ -4,6 +4,7 @@ import com.genai.genealogy.gedcom.domain.Family;
 import com.genai.genealogy.gedcom.domain.Gedcom;
 import com.genai.genealogy.gedcom.domain.Header;
 import com.genai.genealogy.gedcom.domain.Individual;
+import com.genai.genealogy.gedcom.domain.Note;
 import com.genai.genealogy.gedcom.domain.Source;
 import com.genai.genealogy.gedcom.domain.Submitter;
 import com.genai.genealogy.gedcom.mapper.GedcomMapper;
@@ -37,6 +38,7 @@ public class GedcomReader {
         Map<String, Family> families = new HashMap<>();
         Map<String, Source> sources = new HashMap<>();
         Map<String, Submitter> submitters = new HashMap<>();
+        Map<String, Note> notes = new HashMap<>();
 
         for (RawRecord raw : rawRecords) {
             if ("HEAD".equals(raw.tag())) {
@@ -49,6 +51,8 @@ public class GedcomReader {
                 sources.put(raw.id(), mapper.toSource(raw));
             } else if ("SUBM".equals(raw.tag())) {
                 submitters.put(raw.id(), mapper.toSubmitter(raw));
+            } else if ("NOTE".equals(raw.tag())) {
+                notes.put(raw.id(), mapper.toNote(raw));
             }
         }
 
@@ -58,6 +62,7 @@ public class GedcomReader {
                 .families(families)
                 .sources(sources)
                 .submitters(submitters)
+                .notes(notes)
                 .build();
     }
 

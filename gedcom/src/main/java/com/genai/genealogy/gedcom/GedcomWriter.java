@@ -4,6 +4,7 @@ import com.genai.genealogy.gedcom.domain.Event;
 import com.genai.genealogy.gedcom.domain.Family;
 import com.genai.genealogy.gedcom.domain.Gedcom;
 import com.genai.genealogy.gedcom.domain.Header;
+import com.genai.genealogy.gedcom.domain.HeaderSource;
 import com.genai.genealogy.gedcom.domain.Individual;
 import com.genai.genealogy.gedcom.domain.Source;
 import com.genai.genealogy.gedcom.domain.Submitter;
@@ -53,31 +54,35 @@ public class GedcomWriter {
     private void writeHeader(BufferedWriter writer, Header header) throws IOException {
         if (header == null) return;
         writeLine(writer, 0, null, "HEAD", null);
-        if (header.source() != null) {
-            writeLine(writer, 1, null, "SOUR", header.source());
-            if (header.version() != null) {
-                writeLine(writer, 2, null, "VERS", header.version());
-            }
+        HeaderSource headerSource = header.source();
+        if (headerSource != null) {
+            writeHeaderSource(writer, headerSource);
         }
-        writeLine(writer, 1, null, "GEDC", null);
-        writeLine(writer, 2, null, "VERS", "5.5");
-        writeLine(writer, 2, null, "FORM", "LINEAGE-LINKED");
+//        writeLine(writer, 1, null, "GEDC", null);
+//        writeLine(writer, 2, null, "VERS", "5.5");
+//        writeLine(writer, 2, null, "FORM", "LINEAGE-LINKED");
         writeLine(writer, 1, null, "CHAR", "UTF-8");
-        if (header.date() != null) {
-            writeLine(writer, 1, null, "DATE", header.date());
-            if (header.time() != null) {
-                writeLine(writer, 2, null, "TIME", header.time());
-            }
-        }
-        if (header.submitterId() != null) {
-            writeLine(writer, 1, null, "SUBM", "@" + sanitizeId(header.submitterId()) + "@");
-        }
+//        if (header.date() != null) {
+//            writeLine(writer, 1, null, "DATE", header.date());
+//            if (header.time() != null) {
+//                writeLine(writer, 2, null, "TIME", header.time());
+//            }
+//        }
+//        if (header.submitterId() != null) {
+//            writeLine(writer, 1, null, "SUBM", "@" + sanitizeId(header.submitterId()) + "@");
+//        }
+    }
+
+    private void writeHeaderSource(BufferedWriter writer, HeaderSource source) throws IOException {
+        writeLine(writer, 1, null, "SOUR", source.name());
+        if (source.version() != null)
+            writeLine(writer, 2, null, "VERS", source.version());
     }
 
     private void writeIndividual(BufferedWriter writer, Individual indi) throws IOException {
         writeLine(writer, 0, indi.id(), "INDI", null);
         if (indi.name() != null)
-            writeLine(writer, 1, null, "NAME", indi.name());
+            writeLine(writer, 1, null, "NAME", indi.name().name());
         if (indi.sex() != null) writeLine(writer, 1, null, "SEX", indi.sex());
 
         writeEvents(writer, indi.events(), 1);
@@ -101,11 +106,16 @@ public class GedcomWriter {
 
     private void writeFamily(BufferedWriter writer, Family fam) throws IOException {
         writeLine(writer, 0, fam.id(), "FAM", null);
-        if (fam.husbandId() != null)
-            writeLine(writer, 1, null, "HUSB", "@" + sanitizeId(fam.husbandId()) + "@");
-        if (fam.wifeId() != null)
-            writeLine(writer, 1, null, "WIFE", "@" + sanitizeId(fam.wifeId()) + "@");
-
+        if (fam.husbandIds() != null) {
+            for (String husbandId : fam.husbandIds()) {
+                writeLine(writer, 1, null, "HUSB", "@" + sanitizeId(husbandId) + "@");
+            }
+        }
+        if (fam.wifeIds() != null) {
+            for (String wifeId : fam.wifeIds()) {
+                writeLine(writer, 1, null, "WIFE", "@" + sanitizeId(wifeId) + "@");
+            }
+        }
         if (fam.childrenIds() != null) {
             for (String childId : fam.childrenIds()) {
                 writeLine(writer, 1, null, "CHIL", "@" + sanitizeId(childId) + "@");

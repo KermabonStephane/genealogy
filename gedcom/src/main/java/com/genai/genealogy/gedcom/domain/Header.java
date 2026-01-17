@@ -2,13 +2,16 @@ package com.genai.genealogy.gedcom.domain;
 
 import lombok.Builder;
 
+import java.time.LocalDateTime;
+
 @Builder
 public record Header(
-    String source,
-    String version,
-    String gedcomVersion,
+    HeaderSource source,
+    GedcomVersion gedcomVersion,
     String encoding,
-    String date,
-    String time,
-    String submitterId
+    LocalDateTime date,
+    Submitter submitter,
+    String file,
+    String copyright,
+    String language
 ) {}

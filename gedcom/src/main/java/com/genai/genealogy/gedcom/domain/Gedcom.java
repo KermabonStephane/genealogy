@@ -9,5 +9,6 @@ public record Gedcom(
     Map<String, Individual> individuals,
     Map<String, Family> families,
     Map<String, Source> sources,
-    Map<String, Submitter> submitters
+    Map<String, Submitter> submitters,
+    Map<String, Note> notes
 ) {}
