@@ -1,7 +1,7 @@
 package com.genai.genealogy.gedcom
 
+
 import spock.lang.Specification
-import java.nio.charset.Charset
 
 class AnselSpec extends Specification {
 

@@ -1,5 +1,6 @@
 package com.genai.genealogy.gedcom.parser
 
+import com.genai.genealogy.gedcom.domain.GedcomTag
 import spock.lang.Specification
 
 import java.nio.charset.StandardCharsets
@@ -24,21 +25,21 @@ class GedcomParserSpec extends Specification {
 
         then:
         records.size() == 2
-        records[0].tag == "HEAD"
+        records[0].tag == GedcomTag.HEAD.getTag()
         records[0].children.size() == 2
-        records[0].children[1].tag == "GEDC"
+        records[0].children[1].tag == GedcomTag.GEDCOM.getTag()
         records[0].children[1].children.size() == 1
-        records[0].children[1].children[0].tag == "VERS"
+        records[0].children[1].children[0].tag == GedcomTag.VERSION.getTag()
         records[0].children[1].children[0].value == "5.5"
 
         and:
-        records[1].tag == "INDI"
+        records[1].tag == GedcomTag.INDIVIDUAL.getTag()
         records[1].id == "I1"
         records[1].children.size() == 1
-        records[1].children[0].tag == "NAME"
+        records[1].children[0].tag == GedcomTag.NAME.getTag()
         records[1].children[0].value == "John /Doe/"
         records[1].children[0].children.size() == 2
-        records[1].children[0].children[0].tag == "GIVN"
+        records[1].children[0].children[0].tag == GedcomTag.GIVEN_NAME.getTag()
         records[1].children[0].children[0].value == "John"
     }
 }

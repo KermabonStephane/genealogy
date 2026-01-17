@@ -3,6 +3,7 @@ package com.genai.genealogy.gedcom.mapper;
 import com.genai.genealogy.gedcom.GedcomIdentifierSanitizer;
 import com.genai.genealogy.gedcom.domain.Event;
 import com.genai.genealogy.gedcom.domain.Family;
+import com.genai.genealogy.gedcom.domain.GedcomTag;
 import com.genai.genealogy.gedcom.domain.GedcomVersion;
 import com.genai.genealogy.gedcom.domain.Header;
 import com.genai.genealogy.gedcom.domain.HeaderSource;
@@ -16,6 +17,7 @@ import com.genai.genealogy.gedcom.parser.RawRecord;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class GedcomMapper implements GedcomIdentifierSanitizer {
     public static final GedcomMapper INSTANCE = new GedcomMapper();
@@ -23,15 +25,19 @@ public class GedcomMapper implements GedcomIdentifierSanitizer {
     public Header toHeader(RawRecord raw) {
         Header.HeaderBuilder builder = Header.builder();
         raw.children().forEach(child -> {
-            switch (child.tag()) {
-                case "SOUR" -> builder.source(toHeaderSource(child));
-                case "DATE" -> builder.date(toDateTime(child));
-                case "SUBM" -> builder.submitter(toSubmitter(child));
-                case "FILE" -> builder.file(child.value());
-                case "COPR" -> builder.copyright(child.value());
-                case "GEDC" -> builder.gedcomVersion(toGedcomVersion(child));
-                case "CHAR" -> builder.encoding(child.value());
-                case "LANG" -> builder.language(child.value());
+            Optional<GedcomTag> tag = GedcomTag.fromTag(child.tag());
+            if (tag.isPresent()) {
+                switch (tag.get()) {
+                    case SOURCE -> builder.source(toHeaderSource(child));
+                    case DATE -> builder.date(toDateTime(child));
+                    case SUBMITTER -> builder.submitter(toSubmitter(child));
+                    case FILE -> builder.file(child.value());
+                    case COPYRIGHT -> builder.copyright(child.value());
+                    case GEDCOM ->
+                            builder.gedcomVersion(toGedcomVersion(child));
+                    case CHARACTER_SET -> builder.encoding(child.value());
+                    case LANGUAGE -> builder.language(child.value());
+                }
             }
         });
         return builder.build();
@@ -40,8 +46,11 @@ public class GedcomMapper implements GedcomIdentifierSanitizer {
     private GedcomVersion toGedcomVersion(RawRecord raw) {
         GedcomVersion.GedcomVersionBuilder builder = GedcomVersion.builder();
         raw.children().forEach(child -> {
-            switch (child.tag()) {
-                case "VERS" -> builder.version(child.value());
+            Optional<GedcomTag> tag = GedcomTag.fromTag(child.tag());
+            if (tag.isPresent()) {
+                switch (tag.get()) {
+                    case VERSION -> builder.version(child.value());
+                }
             }
         });
         return builder.build();
@@ -57,8 +66,11 @@ public class GedcomMapper implements GedcomIdentifierSanitizer {
         HeaderSource.HeaderSourceBuilder builder = HeaderSource.builder();
         builder.name(raw.value());
         raw.children().forEach(child -> {
-            switch (child.tag()) {
-                case "VERS" -> builder.version(child.value());
+            Optional<GedcomTag> tag = GedcomTag.fromTag(child.tag());
+            if (tag.isPresent()) {
+                switch (tag.get()) {
+                    case VERSION -> builder.version(child.value());
+                }
             }
         });
         return builder.build();
@@ -68,9 +80,12 @@ public class GedcomMapper implements GedcomIdentifierSanitizer {
         Individual.IndividualBuilder builder = Individual.builder();
         builder.id(raw.id());
         raw.children().forEach(child -> {
-            switch (child.tag()) {
-                case "NAME" -> builder.name(toPersonalName(child));
-                case "SEX" -> builder.sex(child.value());
+            Optional<GedcomTag> tag = GedcomTag.fromTag(child.tag());
+            if (tag.isPresent()) {
+                switch (tag.get()) {
+                    case NAME -> builder.name(toPersonalName(child));
+                    case SEX -> builder.sex(child.value());
+                }
             }
         });
         return builder.build();
@@ -80,14 +95,18 @@ public class GedcomMapper implements GedcomIdentifierSanitizer {
         PersonalName.PersonalNameBuilder builder = PersonalName.builder();
         builder.name(child.value());
         child.children().forEach(grandChild -> {
-            switch (grandChild.tag()) {
-                case "GIVN" -> builder.givenName(grandChild.value());
-                case "SURN" -> builder.surname(grandChild.value());
-                case "NICK" -> builder.nickName(grandChild.value());
-                case "NPFX" -> builder.prefixName(grandChild.value());
-                case "SPFX" -> builder.surnamePrefix(grandChild.value());
-                case "NSFX" -> builder.suffixName(grandChild.value());
-            };
+            Optional<GedcomTag> tag = GedcomTag.fromTag(grandChild.tag());
+            if (tag.isPresent()) {
+                switch (tag.get()) {
+                    case GIVEN_NAME -> builder.givenName(grandChild.value());
+                    case SURNAME -> builder.surname(grandChild.value());
+                    case NICKNAME -> builder.nickName(grandChild.value());
+                    case NAME_PREFIX -> builder.prefixName(grandChild.value());
+                    case SURNAME_PREFIX ->
+                            builder.surnamePrefix(grandChild.value());
+                    case NAME_SUFFIX -> builder.suffixName(grandChild.value());
+                }
+            }
         });
         return builder.build();
     }
@@ -98,10 +117,13 @@ public class GedcomMapper implements GedcomIdentifierSanitizer {
         List<String> wifeId = new ArrayList<>();
         List<String> childrenId = new ArrayList<>();
         raw.children().forEach(child -> {
-            switch (child.tag()) {
-                case "HUSB" -> husbandId.add(sanitizeId(child.value()));
-                case "WIFE" -> wifeId.add(sanitizeId(child.value()));
-                case "CHIL" -> childrenId.add(sanitizeId(child.value()));
+            Optional<GedcomTag> tag = GedcomTag.fromTag(child.tag());
+            if (tag.isPresent()) {
+                switch (tag.get()) {
+                    case HUSBAND -> husbandId.add(sanitizeId(child.value()));
+                    case WIFE -> wifeId.add(sanitizeId(child.value()));
+                    case CHILD -> childrenId.add(sanitizeId(child.value()));
+                }
             }
         });
         if (!husbandId.isEmpty()) {
@@ -133,8 +155,12 @@ public class GedcomMapper implements GedcomIdentifierSanitizer {
         StringBuffer content = new StringBuffer();
         content.append(raw.value());
         raw.children().forEach(child -> {
-            switch (child.tag()) {
-                case "CONT" -> content.append(child.value()).append("\n");
+            Optional<GedcomTag> tag = GedcomTag.fromTag(child.tag());
+            if (tag.isPresent()) {
+                switch (tag.get()) {
+                    case CONTINUED ->
+                            content.append(child.value()).append("\n");
+                }
             }
         });
         if (!content.isEmpty()) {

@@ -3,6 +3,7 @@ package com.genai.genealogy.gedcom;
 import com.genai.genealogy.gedcom.domain.Event;
 import com.genai.genealogy.gedcom.domain.Family;
 import com.genai.genealogy.gedcom.domain.Gedcom;
+import com.genai.genealogy.gedcom.domain.GedcomTag;
 import com.genai.genealogy.gedcom.domain.Header;
 import com.genai.genealogy.gedcom.domain.HeaderSource;
 import com.genai.genealogy.gedcom.domain.Individual;
@@ -46,14 +47,14 @@ public class GedcomWriter implements GedcomIdentifierSanitizer{
                 }
             }
 
-            writeLine(writer, 0, null, "TRLR", null);
+            writeLine(writer, 0, null, GedcomTag.TRAILER.getTag(), null);
             writer.flush();
         }
     }
 
     private void writeHeader(BufferedWriter writer, Header header) throws IOException {
         if (header == null) return;
-        writeLine(writer, 0, null, "HEAD", null);
+        writeLine(writer, 0, null, GedcomTag.HEAD.getTag(), null);
         HeaderSource headerSource = header.source();
         if (headerSource != null) {
             writeHeaderSource(writer, headerSource);
@@ -61,7 +62,7 @@ public class GedcomWriter implements GedcomIdentifierSanitizer{
 //        writeLine(writer, 1, null, "GEDC", null);
 //        writeLine(writer, 2, null, "VERS", "5.5");
 //        writeLine(writer, 2, null, "FORM", "LINEAGE-LINKED");
-        writeLine(writer, 1, null, "CHAR", "UTF-8");
+        writeLine(writer, 1, null, GedcomTag.CHARACTER_SET.getTag(), "UTF-8");
 //        if (header.date() != null) {
 //            writeLine(writer, 1, null, "DATE", header.date());
 //            if (header.time() != null) {
@@ -74,51 +75,52 @@ public class GedcomWriter implements GedcomIdentifierSanitizer{
     }
 
     private void writeHeaderSource(BufferedWriter writer, HeaderSource source) throws IOException {
-        writeLine(writer, 1, null, "SOUR", source.name());
+        writeLine(writer, 1, null, GedcomTag.SOURCE.getTag(), source.name());
         if (source.version() != null)
-            writeLine(writer, 2, null, "VERS", source.version());
+            writeLine(writer, 2, null, GedcomTag.VERSION.getTag(), source.version());
     }
 
     private void writeIndividual(BufferedWriter writer, Individual indi) throws IOException {
-        writeLine(writer, 0, indi.id(), "INDI", null);
+        writeLine(writer, 0, indi.id(), GedcomTag.INDIVIDUAL.getTag(), null);
         if (indi.name() != null)
-            writeLine(writer, 1, null, "NAME", indi.name().name());
-        if (indi.sex() != null) writeLine(writer, 1, null, "SEX", indi.sex());
+            writeLine(writer, 1, null, GedcomTag.NAME.getTag(), indi.name().name());
+        if (indi.sex() != null)
+            writeLine(writer, 1, null, GedcomTag.SEX.getTag(), indi.sex());
 
         writeEvents(writer, indi.events(), 1);
 
         if (indi.familyAsChildIds() != null) {
             for (String famId : indi.familyAsChildIds()) {
-                writeLine(writer, 1, null, "FAMC", "@" + sanitizeId(famId) + "@");
+                writeLine(writer, 1, null, GedcomTag.FAMILY_CHILD.getTag(), "@" + sanitizeId(famId) + "@");
             }
         }
         if (indi.familyAsSpouseIds() != null) {
             for (String famId : indi.familyAsSpouseIds()) {
-                writeLine(writer, 1, null, "FAMS", "@" + sanitizeId(famId) + "@");
+                writeLine(writer, 1, null, GedcomTag.FAMILY_SPOUSE.getTag(), "@" + sanitizeId(famId) + "@");
             }
         }
         if (indi.notes() != null) {
             for (String note : indi.notes()) {
-                writeLine(writer, 1, null, "NOTE", note);
+                writeLine(writer, 1, null, GedcomTag.NOTE.getTag(), note);
             }
         }
     }
 
     private void writeFamily(BufferedWriter writer, Family fam) throws IOException {
-        writeLine(writer, 0, fam.id(), "FAM", null);
+        writeLine(writer, 0, fam.id(), GedcomTag.FAMILY.getTag(), null);
         if (fam.husbandIds() != null) {
             for (String husbandId : fam.husbandIds()) {
-                writeLine(writer, 1, null, "HUSB", "@" + sanitizeId(husbandId) + "@");
+                writeLine(writer, 1, null, GedcomTag.HUSBAND.getTag(), "@" + sanitizeId(husbandId) + "@");
             }
         }
         if (fam.wifeIds() != null) {
             for (String wifeId : fam.wifeIds()) {
-                writeLine(writer, 1, null, "WIFE", "@" + sanitizeId(wifeId) + "@");
+                writeLine(writer, 1, null, GedcomTag.WIFE.getTag(), "@" + sanitizeId(wifeId) + "@");
             }
         }
         if (fam.childrenIds() != null) {
             for (String childId : fam.childrenIds()) {
-                writeLine(writer, 1, null, "CHIL", "@" + sanitizeId(childId) + "@");
+                writeLine(writer, 1, null, GedcomTag.CHILD.getTag(), "@" + sanitizeId(childId) + "@");
             }
         }
 
@@ -126,29 +128,29 @@ public class GedcomWriter implements GedcomIdentifierSanitizer{
 
         if (fam.notes() != null) {
             for (String note : fam.notes()) {
-                writeLine(writer, 1, null, "NOTE", note);
+                writeLine(writer, 1, null, GedcomTag.NOTE.getTag(), note);
             }
         }
     }
 
     private void writeSource(BufferedWriter writer, Source source) throws IOException {
-        writeLine(writer, 0, source.id(), "SOUR", null);
+        writeLine(writer, 0, source.id(), GedcomTag.SOURCE.getTag(), null);
         if (source.title() != null)
-            writeLine(writer, 1, null, "TITL", source.title());
+            writeLine(writer, 1, null, GedcomTag.TITLE.getTag(), source.title());
         if (source.abbreviation() != null)
-            writeLine(writer, 1, null, "ABBR", source.abbreviation());
+            writeLine(writer, 1, null, GedcomTag.ABBREVIATION.getTag(), source.abbreviation());
         if (source.publication() != null)
-            writeLine(writer, 1, null, "PUBL", source.publication());
+            writeLine(writer, 1, null, GedcomTag.PUBLICATION.getTag(), source.publication());
         if (source.text() != null)
-            writeLine(writer, 1, null, "TEXT", source.text());
+            writeLine(writer, 1, null, GedcomTag.TEXT.getTag(), source.text());
     }
 
     private void writeSubmitter(BufferedWriter writer, Submitter subm) throws IOException {
-        writeLine(writer, 0, subm.id(), "SUBM", null);
+        writeLine(writer, 0, subm.id(), GedcomTag.SUBMITTER.getTag(), null);
         if (subm.name() != null)
-            writeLine(writer, 1, null, "NAME", subm.name());
+            writeLine(writer, 1, null, GedcomTag.NAME.getTag(), subm.name());
         if (subm.address() != null)
-            writeLine(writer, 1, null, "ADDR", subm.address());
+            writeLine(writer, 1, null, GedcomTag.ADDRESS.getTag(), subm.address());
     }
 
     private void writeEvents(BufferedWriter writer, List<Event> events, int level) throws IOException {
@@ -156,9 +158,9 @@ public class GedcomWriter implements GedcomIdentifierSanitizer{
         for (Event event : events) {
             writeLine(writer, level, null, event.type(), event.description());
             if (event.date() != null)
-                writeLine(writer, level + 1, null, "DATE", event.date());
+                writeLine(writer, level + 1, null, GedcomTag.DATE.getTag(), event.date());
             if (event.place() != null)
-                writeLine(writer, level + 1, null, "PLAC", event.place());
+                writeLine(writer, level + 1, null, GedcomTag.PLACE.getTag(), event.place());
         }
     }
 

@@ -20,24 +20,24 @@ class GedcomWriterSpec extends Specification {
 
         def john = Individual.builder()
                 .id("I1")
-                .name("John /Doe/")
+                .name(PersonalName.builder().name("John /Doe/").build())
                 .sex("M")
-                .events([Event.builder().type("BIRT").date("1 JAN 1900").place("New York").build()])
+                .events([Event.builder().type(GedcomTag.BIRTH.getTag()).date("1 JAN 1900").place("New York").build()])
                 .familyAsSpouseIds(["F1"])
                 .build()
 
         def jane = Individual.builder()
                 .id("I2")
-                .name("Jane /Smith/")
+                .name(PersonalName.builder().name("Jane /Smith/").build())
                 .sex("F")
                 .familyAsSpouseIds(["F1"])
                 .build()
 
         def family = Family.builder()
                 .id("F1")
-                .husbandId("I1")
-                .wifeId("I2")
-                .events([Event.builder().type("MARR").date("1 JAN 1920").build()])
+                .husbandIds(["I1"])
+                .wifeIds(["I2"])
+                .events([Event.builder().type(GedcomTag.MARRIAGE.getTag()).date("1 JAN 1920").build()])
                 .build()
 
         def gedcom = Gedcom.builder()
@@ -66,7 +66,7 @@ class GedcomWriterSpec extends Specification {
 
         then:
         rereadGedcom.individuals().size() == 2
-        rereadGedcom.individuals()["I1"].name() == "John /Doe/"
-        rereadGedcom.families()["F1"].husbandId() == "@I1@"
+        rereadGedcom.individuals()["I1"].name().name() == "John /Doe/"
+        rereadGedcom.families()["F1"].husbandIds().contains("I1")
     }
 }

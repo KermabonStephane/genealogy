@@ -1,7 +1,6 @@
 package com.genai.genealogy.gedcom
 
 import spock.lang.Specification
-import java.nio.charset.Charset
 
 class AnselReaderSpec extends Specification {
 
@@ -71,12 +70,12 @@ class AnselReaderSpec extends Specification {
         
         and: "Individual content should match"
         gedcom.individuals.size() == 2
-        gedcom.individuals["I1"].name == "John /Doe/"
-        gedcom.individuals["I2"].name == "Jane /Smith/"
+        gedcom.individuals["I1"].name.name == "John /Doe/"
+        gedcom.individuals["I2"].name.name == "Jane /Smith/"
 
         and: "Family content should match"
         gedcom.families.size() == 1
-        gedcom.families["F1"].husbandId == "@I1@"
-        gedcom.families["F1"].wifeId == "@I2@"
+        gedcom.families["F1"].husbandIds().contains("I1")
+        gedcom.families["F1"].wifeIds().contains("I2")
     }
 }

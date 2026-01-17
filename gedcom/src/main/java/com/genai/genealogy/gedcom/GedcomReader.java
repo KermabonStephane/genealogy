@@ -2,6 +2,7 @@ package com.genai.genealogy.gedcom;
 
 import com.genai.genealogy.gedcom.domain.Family;
 import com.genai.genealogy.gedcom.domain.Gedcom;
+import com.genai.genealogy.gedcom.domain.GedcomTag;
 import com.genai.genealogy.gedcom.domain.Header;
 import com.genai.genealogy.gedcom.domain.Individual;
 import com.genai.genealogy.gedcom.domain.Note;
@@ -41,17 +42,17 @@ public class GedcomReader {
         Map<String, Note> notes = new HashMap<>();
 
         for (RawRecord raw : rawRecords) {
-            if ("HEAD".equals(raw.tag())) {
+            if (GedcomTag.HEAD.getTag().equals(raw.tag())) {
                 header = mapper.toHeader(raw);
-            } else if ("INDI".equals(raw.tag())) {
+            } else if (GedcomTag.INDIVIDUAL.getTag().equals(raw.tag())) {
                 individuals.put(raw.id(), mapper.toIndividual(raw));
-            } else if ("FAM".equals(raw.tag())) {
+            } else if (GedcomTag.FAMILY.getTag().equals(raw.tag())) {
                 families.put(raw.id(), mapper.toFamily(raw));
-            } else if ("SOUR".equals(raw.tag())) {
+            } else if (GedcomTag.SOURCE.getTag().equals(raw.tag())) {
                 sources.put(raw.id(), mapper.toSource(raw));
-            } else if ("SUBM".equals(raw.tag())) {
+            } else if (GedcomTag.SUBMITTER.getTag().equals(raw.tag())) {
                 submitters.put(raw.id(), mapper.toSubmitter(raw));
-            } else if ("NOTE".equals(raw.tag())) {
+            } else if (GedcomTag.NOTE.getTag().equals(raw.tag())) {
                 notes.put(raw.id(), mapper.toNote(raw));
             }
         }
@@ -75,8 +76,8 @@ public class GedcomReader {
 
         String content = new String(buffer, 0, read, StandardCharsets.ISO_8859_1);
         String charsetName = "UTF-8";
-        
-        java.util.regex.Pattern pattern = java.util.regex.Pattern.compile("1\\s+CHAR\\s+([^\\r\\n]+)");
+
+        java.util.regex.Pattern pattern = java.util.regex.Pattern.compile("1\\s+" + GedcomTag.CHARACTER_SET.getTag() + "\\s+([^\\r\\n]+)");
         java.util.regex.Matcher matcher = pattern.matcher(content);
         if (matcher.find()) {
             charsetName = matcher.group(1).trim();
