@@ -16,7 +16,7 @@ import java.io.OutputStreamWriter;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
-public class GedcomWriter {
+public class GedcomWriter implements GedcomIdentifierSanitizer{
 
     public void write(Gedcom gedcom, OutputStream outputStream) throws IOException {
         try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(outputStream, StandardCharsets.UTF_8))) {
@@ -176,10 +176,5 @@ public class GedcomWriter {
             writer.write(value);
         }
         writer.write("\n");
-    }
-
-    private String sanitizeId(String id) {
-        if (id == null) return "";
-        return id.replace("@", "");
     }
 }

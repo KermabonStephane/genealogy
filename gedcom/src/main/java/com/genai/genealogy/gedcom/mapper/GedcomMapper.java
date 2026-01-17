@@ -1,5 +1,6 @@
 package com.genai.genealogy.gedcom.mapper;
 
+import com.genai.genealogy.gedcom.GedcomIdentifierSanitizer;
 import com.genai.genealogy.gedcom.domain.Event;
 import com.genai.genealogy.gedcom.domain.Family;
 import com.genai.genealogy.gedcom.domain.GedcomVersion;
@@ -13,11 +14,10 @@ import com.genai.genealogy.gedcom.domain.Submitter;
 import com.genai.genealogy.gedcom.parser.RawRecord;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
-public class GedcomMapper {
+public class GedcomMapper implements GedcomIdentifierSanitizer {
     public static final GedcomMapper INSTANCE = new GedcomMapper();
 
     public Header toHeader(RawRecord raw) {
@@ -126,11 +126,6 @@ public class GedcomMapper {
 
     public Event toEvent(RawRecord raw) {
         return Event.builder().build();
-    }
-
-    private String sanitizeId(String id) {
-        if (id == null) return "";
-        return id.replace("@", "");
     }
 
     public Note toNote(RawRecord raw) {
